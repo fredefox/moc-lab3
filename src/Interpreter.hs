@@ -1,5 +1,6 @@
 module Interpreter
     ( interpret
+    , subst
     ) where
 
 import Chi

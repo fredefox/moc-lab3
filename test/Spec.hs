@@ -1,8 +1,13 @@
 import Chi
 import Interpreter
+import GHC.Natural
+import Data.Maybe
+import Test.QuickCheck
+
+import Debug.Trace
 
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = mapM_ quickCheck [prop_add, prop_mult]
 
 -- `foo` implements equality tests on natural numbers.
 sample = parse . unlines $
@@ -23,7 +28,25 @@ mult = subst (Variable "add") add multimpl
   where
     multimpl = parse . unlines $
       [ "rec mult = \\ m. \\ n. case m of"
-      , "  { Zero()  -> n"
+      , "  { Zero()  -> Zero()"
       , "  ; Succ(m) -> add n (mult m n)"
       , "  }"
       ]
+
+applyN :: Exp -> [Exp] -> Exp
+applyN e es = interpret $ foldl Apply e es
+
+applyNum :: Exp -> [Natural] -> Maybe Natural
+applyNum e = toNatural . applyN e . map fromNatural
+
+addHelper :: Natural -> Natural -> Maybe Natural
+addHelper n m = applyNum add [n, m]
+
+multHelper :: Natural -> Natural -> Maybe Natural
+multHelper n m = applyNum mult [n, m]
+
+prop_add :: Natural -> Natural -> Bool
+prop_add n m = addHelper n m == Just (n + m)
+
+prop_mult :: Natural -> Natural -> Bool
+prop_mult n m = multHelper n m == Just (n * m)

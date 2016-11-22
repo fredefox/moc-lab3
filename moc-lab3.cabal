@@ -46,6 +46,7 @@ test-suite moc-lab3-test
   main-is:             Spec.hs
   build-depends:       base
                      , moc-lab3
+                     , QuickCheck == 2.8.*
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 

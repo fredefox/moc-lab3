@@ -1,7 +1,4 @@
-module Interpreter
-    ( interpret
-    , subst
-    ) where
+module Interpreter ( interpret ) where
 
 import Chi
 import Data.List

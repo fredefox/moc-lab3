@@ -7,10 +7,15 @@ import Test.QuickCheck
 import Debug.Trace
 
 main :: IO ()
-main = mapM_ quickCheck [prop_add, prop_mult]
+main = quickCheck prop_foo
+    >> testSubstitution subst
+    >> testEvaluation interpret
+    >> quickCheck prop_add
+    >> quickCheck prop_mult
 
 -- `foo` implements equality tests on natural numbers.
-sample = parse . unlines $
+foo :: Exp
+foo = parse . unlines $
   [ "rec foo = \\m. \\n. case m of"
   , "  { Zero() -> case n of"
   , "    { Zero()  -> True()"
@@ -22,6 +27,20 @@ sample = parse . unlines $
   , "    }"
   , "  }"
   ]
+
+prop_foo :: Natural -> Natural -> Bool
+prop_foo n m = fooHelper n m == Just (n == m)
+
+toBool :: Exp -> Maybe Bool
+toBool (Const c _) = Just $ case c of
+  Constructor "False" -> False
+  Constructor "True"    -> True
+toBool _ = Nothing
+
+fooHelper :: Natural -> Natural -> Maybe Bool
+fooHelper n m = toBool $ applyN foo nm
+  where
+    nm = map fromNatural [n, m]
 
 mult :: Exp
 mult = subst (Variable "add") add multimpl

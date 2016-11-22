@@ -1,3 +1,12 @@
+# Introduction
+Source is included in this hand-in in two ways:
+
+    1) Concrete haskell source-files: `Interpreter.hs` and `Spec.hs`
+    2) As a zipped Haskell Stack Project
+
+If you *do* have Haskell Stack setup it is advisable to use the latter option.
+Just unpack the archive and do `stack test` to run all test-cases.
+
 # Question 1
 The given program implements equality for natural numbers (defined in the usual way).
 

@@ -2,8 +2,11 @@ module Main where
 
 import Interpreter
 import System.Environment
+import Chi
+import Control.Monad
 
 main :: IO ()
-main = getArgs >>= mapM_ act
+main = getArgs >>= (`forM_` (act >=> putStrLn))
   where
-    act = pretty . interpret . parse <$> readFile
+    act :: FilePath -> IO String
+    act f = pretty . interpret . parse <$> readFile f

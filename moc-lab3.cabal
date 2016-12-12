@@ -22,6 +22,7 @@ library
                      , LexChi
                      , ParChi
                      , PrintChi
+                     , SelfInterpreter
   build-depends:       base >= 4.7 && < 5
                      , containers == 0.5.*
                      , QuickCheck == 2.8.*

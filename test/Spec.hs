@@ -1,5 +1,6 @@
 import Chi
 import Interpreter
+import qualified SelfInterpreter
 import GHC.Natural
 import Data.Maybe
 import Test.QuickCheck
@@ -69,3 +70,12 @@ prop_add n m = addHelper n m == Just (n + m)
 
 prop_mult :: Natural -> Natural -> Bool
 prop_mult n m = multHelper n m == Just (n * m)
+
+testSelfSubstitution :: Variable -> Exp -> Exp -> Bool
+testSelfSubstitution v e0 e1
+  =  interpret (subst v e0 e1)
+  == interpret self
+  where
+    self = Apply (Apply (Apply SelfInterpreter.subst (Var v)) e0) e1
+
+hlpr v e0 e1 = Apply (Apply (Apply SelfInterpreter.subst (Var v)) e0) e1

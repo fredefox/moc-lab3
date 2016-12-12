@@ -1,6 +1,7 @@
 module Interpreter
     ( interpret
     , subst
+    , substMany
     ) where
 
 import Chi
@@ -30,9 +31,13 @@ interpret e = case e of
   Lambda _ _   -> e
   Case e bs    -> interpret e''
     where
-      (Const c es) = interpret e
+      (Const c es) = case interpret e of
+        x@(Const _ _) -> x
+        x             -> error
+                $  "Branch-expression must evaluate to a constructor. "
+                ++ show x
       (Branch _ xs e') = findB c bs
-      e''          = substMany xs es e'
+      e''          = substMany (zip xs es) e'
   Rec v e'     -> interpret $ subst v e e'
   Var _        -> e
   Const c es   -> Const c $ map interpret es
@@ -40,7 +45,7 @@ interpret e = case e of
 findB :: Constructor -> [Br] -> Br
 findB c = fromMaybe undefined . find (\(Branch c' _ _) -> c == c')
 
-substMany :: [Variable] -> [Exp] -> Exp -> Exp
-substMany vs es e0 = foldl step e0 $ zip vs es
+substMany :: [(Variable, Exp)] -> Exp -> Exp
+substMany z e0 = foldl step e0 z
   where
     step acc (v, e) = subst v e acc

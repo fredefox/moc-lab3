@@ -9,7 +9,7 @@ rec subst = \v . \e . \t . case t of
   }
 
 -- equal
-\a . \b -> case a of
+rec equal = \a . \b -> case a of
   { Zero()   -> case b of
     { Zero()   -> True()
     , Succ(b') -> False()
